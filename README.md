@@ -21,8 +21,9 @@ The goal of this document is to describe a way I see checked exceptions could wo
 ## Overview
 
 Functions are allowed to specify the types of the exceptions they throw by using the `throws` specifier in their signature.
-The compiler enforces that only the specified types can escape the function as exceptions.
-`catch` doesn't do any dynamic check on the type of the exception.
+If they opt-in into specifying the set of exceptions they can throw, the set must be comprehensive (only exceptions from that set can escape the function).
+The compiler enforces that condition, and produces a compiler error if an exception of a type not declared in the exception list might escape the function.
+When `catch`ing exceptions from a function with a `throws` specifier, the `catch` doesn't perform any dynamic cast.
 
 ### Limitations
 
@@ -244,6 +245,8 @@ try {
     throw e;
 }
 ```
+
+(6) Question: How does `try/catch` work when calling both a function with the `throws` specifier and one without in its body?
 
 ### 4. Definition
 
