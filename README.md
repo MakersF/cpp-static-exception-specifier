@@ -371,7 +371,7 @@ Here are a set of questions once we allow references to be thrown. I welcome any
 How does it work, given `Derived` inherits from `T`, to do `throw Derived()`?
 2. Is it allowed for a function to use `throws(T, const T&)`? If so, what does `throw T()` does? What does `T ex; throw ex;` does?
 3. Can base classes in catch bind to derived classes in the exception list?
-```
+```c++
 struct B {};
 struct D1 : B {};
 struct D2 : B {};
