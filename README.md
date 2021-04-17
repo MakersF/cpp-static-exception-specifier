@@ -12,6 +12,8 @@ As such, I'd like to make this part of the function signature explicit.
 Other languages have a concept of checked exceptions (e.g. Java), although it tends to be generally criticized.
 I believe that the criticisms in the other languages comes from the less flexible type system, which makes it impossible to express the intended concepts.
 
+C++ also had exceptions specifiers in the past. That feature proved to be of small usefulness. I believe that was the cause because it didn't provide compile time guarantees, but instead added runtime checks.
+
 The below proposal doesn't aim to improve performance or determinism of exception handling (I don't have experience in an environment in which those were problems), but it might be that the sematic defined below allows for determinism and performance gains.
 
 The goal of this document is to describe a way I see checked exceptions could work in c++, share some of the problems I see with this solution, get feedback from other memebers of the c++ community and potentially make this a real proposal if we believe this is a workable and worthwile improvement to the language.
