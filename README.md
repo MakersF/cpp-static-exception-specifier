@@ -4,7 +4,7 @@
 
 Exceptions in C++ make control flow unpredictable.
 When calling a function, it's impossible to know which exceptions it might throw.
-Event looking at its source code is not enough, as we'd have to inspect all the functions called from it, recursively until we reache the leaves.
+Event looking at its source code is not enough, as we'd have to inspect all the functions called from it, recursively until we reach the leaves.
 
 Conceptually an exception is part of the contract of a function, and it could be considered one of it's return paths.
 As such, I'd like to make this part of the function signature explicit.
