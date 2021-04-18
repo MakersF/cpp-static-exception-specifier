@@ -1,4 +1,4 @@
-# C++ Checked Exceptions
+# C++ Static Exception Specifier
 
 ## Rationale
 
@@ -9,21 +9,19 @@ Event looking at its source code is not enough, as we'd have to inspect all the 
 Conceptually an exception is part of the contract of a function, and it could be considered one of it's return paths.
 As such, I'd like to make this part of the function signature explicit.
 
-Other languages have a concept of checked exceptions (e.g. Java), although it tends to be generally criticized.
-I believe that the criticisms in the other languages comes from the less flexible type system, which makes it impossible to express the intended concepts.
+C++ had [dynamic exception specifiers](https://en.cppreference.com/w/cpp/language/except_spec) in the past, where throwing an exception which was not declared in the specifier list resulted in `std::terminate` to be called. The feature has been removed from the language in the recent standards.
+I believe the feature had limted usefulness because it didn't provide a way to better handle exceptions (due to lack of static checks), but made errors fatal (by calling `std::terminate` if an unexpected exception was indeed throw).
 
-C++ also had exceptions specifiers in the past. That feature proved to be of small usefulness. I believe that was the cause because it didn't provide compile time guarantees, but instead added runtime checks.
+The below proposal doesn't aim to improve performance of exception handling (I don't have experience in an environment in which those were problems), but it might be that the sematic defined below allows for determinism and performance gains.
 
-The below proposal doesn't aim to improve performance or determinism of exception handling (I don't have experience in an environment in which those were problems), but it might be that the sematic defined below allows for determinism and performance gains.
-
-The goal of this document is to describe a way I see checked exceptions could work in c++, share some of the problems I see with this solution, get feedback from other memebers of the c++ community and potentially make this a real proposal if we believe this is a workable and worthwile improvement to the language.
+The goal of this document is to describe a way statically enforced exception specifierrs could work in c++, share some of the problems I see with this solution, get feedback from other memebers of the c++ community and potentially make this a real proposal if we believe this is a workable and worthwile improvement to the language.
 
 ## Overview
 
 Functions are allowed to specify the types of the exceptions they throw by using the `throws` specifier in their signature.
 If they opt-in into specifying the set of exceptions they can throw, the set must be comprehensive (only exceptions from that set can escape the function).
-The compiler enforces that condition, and produces a compiler error if an exception of a type not declared in the exception list might escape the function.
-When `catch`ing exceptions from a function with a `throws` specifier, the `catch` doesn't perform any dynamic cast.
+If an exception of a type which doesn't appear in the `throws` list might escalpe the function, the compiler produces a compilation error.
+When `catch`ing exceptions from a function with a `throws` specifier, the `catch` doesn't perform any dynamic cast (it isn't allowed to catch a derived class when the function specifies it throws a base class).
 
 ### Limitations
 
@@ -330,6 +328,8 @@ Given the feature above, there are a few library features that can be provided t
 std::exceptions_thrown<F, Args...> = /* the set of possible exceptions that F(Args...) throws */
 
 std::remove_exceptions<ExceptionList, Exceptions...> = /* the equivalent of (ExceptionList - Exceptions) as defined in the rules above */
+std::add_exceptions<ExceptionList, Exceptions...> = /* the equivalent of (ExceptionList + Exceptions) as defined in the rules above */
+
 ```
 
 Examples
@@ -391,6 +391,7 @@ try {
 }
 ```
 4. Can we have ambiguous `catch` blocks?
+5. Would it be useful to be able to do `void foo() throws(auto)` similar to how a function can have an auto deduced return type?
 
 ---
 
